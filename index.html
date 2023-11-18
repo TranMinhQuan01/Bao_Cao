@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <title>Histogram Equalization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"], button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #45a049;
+        }
+        #image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        #status {
+            background-color: #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Histogram Equalization</h1>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" onchange="loadImage(event)">
+            <input type="submit" value="Upload">
+        </form>
+        <button onclick="compareImages()">So sánh hình ảnh</button>
+        <h2>Current MRI Image:</h2>
+        <div id="image-container"></div>
+        <h2>Status:</h2>
+        <div id="status"></div>
+        {% if img_data %}
+        <h2>Result:</h2>
+        <img src="data:image/jpeg;base64,{{ img_data }}" id="result-image">
+        {% endif %}
+    </div>
+    <script>
+        var currentImage = null;
+
+        function loadImage(event) {
+            var image = document.createElement('img');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            document.getElementById('image-container').innerHTML = '';
+            document.getElementById('image-container').appendChild(image);
+            currentImage = event.target.files[0];
+            updateStatus();
+        }
+
+        function updateStatus() {
+            if (currentImage) {
+                var status = 'Size: ' + currentImage.size + ' bytes<br>';
+                status += 'Type: ' + currentImage.type;
+                document.getElementById('status').innerHTML = status;
+            }
+        }
+
+        function compareImages() {
+            var resultImage = document.getElementById('result-image');
+            if (currentImage && resultImage) {
+                var compareContainer = document.createElement('div');
+                var originalImage = document.createElement('img');
+                originalImage.src = URL.createObjectURL(currentImage);
+                compareContainer.appendChild(originalImage);
+                compareContainer.appendChild(resultImage.cloneNode(true));
+                document.getElementById('image-container').innerHTML = '';
+                document.getElementById('image-container').appendChild(compareContainer);
+            }
+        }
+    </script>
+</body>
+</html>
